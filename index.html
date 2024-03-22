@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wifi signal strength</title>
+  </head>
+
+  <style>
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    #gauge {
+      width: 400px;
+      height: 320px;
+      margin: 0 auto;
+    }
+
+    #signal-details {
+      margin: 0 auto;
+      border-collapse: collapse;
+      background-color: #242424;
+      color: #ffffff;
+    }
+
+    #signal-details th {
+      background-color: #1d1d1d;
+      border: 1px solid #ddd;
+      padding: 8px;
+      color: #ffffff;
+    }
+
+    #signal-details td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      background-color: #242424;
+      color: #ffffff;
+    }
+  </style>
+
+  <body>
+    <div id="gauge"></div>
+
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.2.9/justgage.min.js"
+    ></script>
+
+    <table id="signal-details">
+      <tr>
+        <th>SSID</th>
+        <th>Quality</th>
+        <th>Signal level</th>
+        <th>Channel</th>
+        <th>Frequency</th>
+        <th>Security</th>
+      </tr>
+      <tr>
+        <td id="ssid"></td>
+        <td id="quality"></td>
+        <td id="level"></td>
+        <td id="channel"></dt>
+        <td id="frequency"></td>
+        <td id="security"></td>
+      </tr>
+    </table>
+
+    <script>
+      var gauge = new JustGage({
+        id: "gauge",
+        value: 0,
+        min: 0,
+        max: 100,
+        decimals: 0,
+        label: "Signal quality",
+        valueFontColor: "#ffffff",
+        levelColors: ["#ff0000", "#00ff00"],
+        gaugeWidthScale: 0.6,
+      });
+
+      function updateSignalQuality() {
+        // Fetch the signal quality from the server
+        fetch("/signal")
+          .then((response) => response.json())
+          .then((data) => {
+            // Update the needle rotation according to the signal quality
+            const signalQuality = data[0].quality;
+            gauge.refresh(signalQuality);
+
+            // Update the signal details
+            document.getElementById("ssid").innerText = data[0].ssid;
+            document.getElementById("quality").innerText = data[0].quality + " %";
+            document.getElementById("level").innerText = data[0].signal_level + " dBm";
+            document.getElementById("channel").innerText = data[0].channel;
+            document.getElementById("frequency").innerText = data[0].frequency + " MHz";
+            document.getElementById("security").innerText = data[0].security;
+
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      // Update the signal quality every second
+      setInterval(updateSignalQuality, 1000);
+    </script>
+  </body>
+</html>
