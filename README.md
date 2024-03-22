@@ -2,8 +2,10 @@
 
 ![wifi signal strength monitor](demo.png)
 
-To run this project, you need to have [node.js](https://nodejs.org/en/download/) installed on your machine.
-First install the dependencies and then run the project.
+To run this project, you need to have [node.js](https://nodejs.org/) installed on your machine.
+Download it from the official website or install using your Linux distribution package manager.
+
+Next install the javascript dependencies and then finally run the project.
 
 ```bash
 npm install
